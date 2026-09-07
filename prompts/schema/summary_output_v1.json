@@ -1,0 +1,6 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "summarizer 输出（§4.3）",
+  "description": "summarizer 输出为纯文本单段小结（非 JSON）：禁止标题/前缀/引号/换行，字数 ≤ summary_max（§1.6 口径），只保留主线。此文件为契约文档；运行期校验在 core/validator.validate_summary_text（§9.4）。",
+  "type": "string"
+}

@@ -1,0 +1,55 @@
+{
+  "llm": {
+    "backend": "openai",
+    "base_url": "http://127.0.0.1:1235/v1",
+    "api_key_env": "NOVEL_LLM_API_KEY",
+    "api_key": "not-needed",
+    "models": {
+      "reader": "Qwen",
+      "summarizer": "deepseek-v4-flash"
+    },
+    "profiles": {
+      "reader": {
+        "api_key_env": "NOVEL_LLM_READER_KEY",
+        "base_url": "http://127.0.0.1:1235/v1",
+        "model": "Qwen"
+      },
+      "summarizer": {
+        "api_key_env": "NOVEL_LLM_SUMMARIZER_KEY",
+        "base_url": "https://xxxx/v1",
+        "model": "deepseek-v4-flash"
+      }
+    },
+    "timeout_s": 300,
+    "max_retries": 3,
+    "timeout_fatal_threshold": 3,
+    "retry_backoff_s": [
+      2,
+      6,
+      18
+    ],
+    "retry_on_status": [
+      408,
+      409,
+      429,
+      500,
+      502,
+      503,
+      504
+    ],
+    "temperature": {
+      "reader": 0.3,
+      "summarizer": 0.3
+    },
+    "max_output_tokens": {
+      "reader": 32768,
+      "summarizer": 32768
+    },
+    "response_format": "json_object"
+  },
+  "run": {
+    "sanitize_output": true,
+    "budget_prompt_tokens": null,
+    "log_level": "INFO"
+  }
+}

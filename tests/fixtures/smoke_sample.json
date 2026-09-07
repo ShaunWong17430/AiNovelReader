@@ -1,0 +1,21 @@
+{
+  "responses": {
+    "reader:part_001": {
+      "chunk": "part_001",
+      "events": [
+        { "event": "主角首次进入遗迹，发现石碑铭文", "impact": "引出世界观主线谜团" }
+      ],
+      "notes": {
+        "characters": "主角：谨慎、善于记录，初次探遗迹表现出强烈好奇心。",
+        "plots": [ "主角在遗迹深处发现刻有未知文字的石碑" ],
+        "questions": [ "石碑铭文由何人所刻？" ],
+        "abstract": "本片讲述主角首次深入遗迹并发现神秘石碑铭文，开启主线调查。"
+      }
+    },
+    "summarizer:1-5": "前五章：主角进入遗迹发现石碑铭文，结识向导并开始追查铭文来历，初步揭开遗迹与旧王朝的关联。"
+  },
+  "faults": {
+    "reader:part_002": { "kind": "NETWORK", "attempts": 2 },
+    "summarizer:6-10": { "kind": "TRUNCATED" }
+  }
+}

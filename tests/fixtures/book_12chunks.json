@@ -1,0 +1,67 @@
+{
+  "_comment": "12 片全书场景（测试 13/14/17 等）。reader:part_001 由 smoke_sample.json 提供（两文件合并加载，跨文件键不得重复——part_001 键控约定见 tests/fixtures/README.md）。",
+  "responses": {
+    "reader:part_002": {
+      "chunk": "part_002",
+      "events": [ { "event": "第二章：发现石碑铭文", "impact": "线索指向旧王朝" } ],
+      "notes": { "characters": "主角：专注研究铭文。", "plots": [ "发现刻有古文的石碑" ], "questions": [], "abstract": "第二章：主角在遗迹内发现神秘石碑铭文。" }
+    },
+    "reader:part_003": {
+      "chunk": "part_003",
+      "events": [ { "event": "第三章：结识向导", "impact": "获得探索助力" } ],
+      "notes": { "characters": "向导登场：熟悉遗迹地形的当地人。", "plots": [ "主角与向导结伴同行" ], "questions": [], "abstract": "第三章：主角结识向导，准备深入遗迹。" }
+    },
+    "reader:part_004": {
+      "chunk": "part_004",
+      "events": [ { "event": "第四章：遭遇第一道机关", "impact": "队伍遇险" } ],
+      "notes": { "characters": "主角：临危不乱。", "plots": [ "破解遗迹机关" ], "questions": [ "机关是谁留下的？" ], "abstract": "第四章：主角一行遭遇机关并成功破解。" }
+    },
+    "reader:part_005": {
+      "chunk": "part_005",
+      "events": [ { "event": "第五章：抵达地下大厅", "impact": "揭开遗迹核心的一角" } ],
+      "notes": { "characters": "向导：确认大厅为祭祀场所。", "plots": [ "发现地下祭祀大厅" ], "questions": [], "abstract": "第五章：主角一行抵达地下大厅，确认其为祭祀场所。" }
+    },
+    "reader:part_006": {
+      "chunk": "part_006",
+      "events": [ { "event": "第六章：碑文破译进展", "impact": "铭文指向失落王朝" } ],
+      "notes": { "characters": "主角：破译能力突出。", "plots": [ "部分破译石碑铭文" ], "questions": [], "abstract": "第六章：碑文破译取得进展，指向失落王朝。" }
+    },
+    "reader:part_007": {
+      "chunk": "part_007",
+      "events": [ { "event": "第七章：内部通道崩塌", "impact": "退路被断" } ],
+      "notes": { "characters": "向导：判断需另寻出口。", "plots": [ "通道崩塌，退路被断" ], "questions": [], "abstract": "第七章：遗迹内部通道崩塌，退路被断。" }
+    },
+    "reader:part_008": {
+      "chunk": "part_008",
+      "events": [ { "event": "第八章：发现旧王朝宝库", "impact": "主线谜团加深" } ],
+      "notes": { "characters": "主角：意识到宝库与铭文相关。", "plots": [ "发现旧王朝遗留宝库" ], "questions": [], "abstract": "第八章：主角发现旧王朝宝库，谜团加深。" }
+    },
+    "reader:part_009": {
+      "chunk": "part_009",
+      "events": [ { "event": "第九章：遭遇守宝傀儡", "impact": "激烈对抗" } ],
+      "notes": { "characters": "向导：战斗中负伤。", "plots": [ "与守宝傀儡激战" ], "questions": [], "abstract": "第九章：主角一行与守宝傀儡展开激战。" }
+    },
+    "reader:part_010": {
+      "chunk": "part_010",
+      "events": [ { "event": "第十章：傀儡核心被毁", "impact": "宝库大门开启" } ],
+      "notes": { "characters": "主角：找出傀儡弱点。", "plots": [ "摧毁傀儡核心" ], "questions": [], "abstract": "第十章：主角摧毁傀儡核心，宝库大门开启。" }
+    },
+    "reader:part_011": {
+      "chunk": "part_011",
+      "events": [ { "event": "第十一章：宝库核心铭文全貌", "impact": "真相呼之欲出" } ],
+      "notes": { "characters": "主角：拼合全部铭文。", "plots": [ "拼合核心铭文" ], "questions": [], "abstract": "第十一章：主角拼合核心铭文，真相呼之欲出。" }
+    },
+    "reader:part_012": {
+      "chunk": "part_012",
+      "events": [ { "event": "第十二章：王朝覆灭之谜解开", "impact": "主线收束" } ],
+      "notes": { "characters": "主角与向导：达成目标。", "plots": [ "解开王朝覆灭之谜" ], "questions": [], "abstract": "第十二章：主角解开王朝覆灭之谜，主线收束。" }
+    },
+    "reader:part_013": {
+      "chunk": "part_013",
+      "events": [ { "event": "第十三章（尾声）：主角整理笔记归档", "impact": "全书完" } ],
+      "notes": { "characters": "主角：回归日常。", "plots": [ "尾声归档" ], "questions": [], "abstract": "第十三章（尾声）：主角整理探索成果，全书完。" }
+    },
+    "summarizer:1-13": "全书记述主角在向导协助下深入遗迹，破译石碑铭文，摧毁守宝傀儡，最终解开旧王朝覆灭之谜并在尾声归档全部发现。",
+    "summarizer:1-12": "全书记述主角在向导协助下深入遗迹，破译石碑铭文，摧毁守宝傀儡，最终解开旧王朝覆灭之谜。"
+  }
+}

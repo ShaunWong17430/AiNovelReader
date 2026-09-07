@@ -1,0 +1,43 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "reader 输出（§4.4）",
+  "type": "object",
+  "required": ["chunk", "events", "notes"],
+  "additionalProperties": false,
+  "properties": {
+    "chunk": { "type": "string", "description": "严格等于本次分片 id，如 part_011" },
+    "events": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["event", "impact"],
+        "additionalProperties": false,
+        "properties": {
+          "event": { "type": "string", "maxLength": 100, "description": "本片发生的事件；禁换行与半角 |" },
+          "impact": { "type": "string", "maxLength": 100, "description": "该事件的影响；禁换行与半角 |" }
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "required": ["characters", "plots", "questions", "abstract"],
+      "additionalProperties": false,
+      "properties": {
+        "characters": { "type": "string", "description": "角色发展，≤ 500 字" },
+        "plots": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "maxLength": 100, "description": "每个情节梗概 ≤ 100 字" }
+        },
+        "questions": {
+          "type": "array",
+          "maxItems": 3,
+          "items": { "type": "string" }
+        },
+        "abstract": { "type": "string", "description": "单片摘要，≤ 300 字" }
+      }
+    }
+  }
+}

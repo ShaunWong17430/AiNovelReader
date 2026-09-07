@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[cod]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# 测试运行时产物（BASE 沙箱根、pytest 缓存——已禁用，双保险）
+.pytest_cache/
+.test_sandboxes/
+# GUI 本地密文（DPAPI 加密，当前用户级；不入库）
+gui/.secrets.json
