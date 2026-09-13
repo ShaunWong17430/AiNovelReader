@@ -33,7 +33,7 @@ GUI 与 CLI 共用同一套 core 逻辑、同一把锁、同一份 `config.json`
 | 项 | 要求 |
 |---|---|
 | 操作系统 | Windows（GUI 的密钥加密依赖 Windows DPAPI） |
-| Python | 3.10+ 使用uv重建 |
+| Python | 3.10（本项目使用 `D:\data\dsh_wz1\pyfordsh\python.exe`） |
 
 **依赖包**（按用途分三类，缺哪类装哪类）：
 
@@ -47,17 +47,17 @@ GUI 与 CLI 共用同一套 core 逻辑、同一把锁、同一份 `config.json`
 安装（全部）：
 
 ```bat
-uv sync
+D:\data\dsh_wz1\pyfordsh\python.exe -m pip install openai PyQt6 pytest tiktoken
 ```
 
 只跑命令行、不要界面：
 
 ```bat
-.venv\Scripts\python.exe -m pip install openai pytest
+D:\data\dsh_wz1\pyfordsh\python.exe -m pip install openai pytest
 ```
 
-**调用约定（铁律）**：一律用 `.venv\Scripts\python.exe`（禁裸 `python`）；
-工作目录固定为 `D:\AiNovelReader`（下称 `CODE_ROOT`）；所有命令在
+**调用约定（铁律）**：一律用 `D:\data\dsh_wz1\pyfordsh\python.exe`（禁裸 `python`）；
+工作目录固定为 `D:\data\dsh_wz1\novel_skill`（下称 `CODE_ROOT`）；所有命令在
 `CODE_ROOT` 下执行。
 
 ---
@@ -66,7 +66,7 @@ uv sync
 
 ### 2.1 准备分片（GUI 与 CLI 通用）
 
-在 `BASE = D:\xxx\novel_reading` 下建 `示例书名\chunks\`，把小说切成
+在 `BASE = D:\data\dsh_wz1\novel_reading` 下建 `示例书名\chunks\`，把小说切成
 **UTF-8 无 BOM、LF 换行**的纯文本分片，命名 `part_001.txt`、`part_002.txt` …
 （零填充位数全书一致，如 3 位；单文件去除空白后 ≤ 30000 字，K28 上限）。
 
@@ -75,8 +75,8 @@ uv sync
 ### 2.2 方式 A：图形界面（推荐日常使用）
 
 ```bat
-cd /d D:\AiNovelReader
-.venv\Scripts\python.exe gui_launcher.py
+cd /d D:\data\dsh_wz1\novel_skill
+D:\data\dsh_wz1\pyfordsh\python.exe gui_launcher.py
 ```
 
 弹出「小说阅读自动化 · 控制台」窗口，按 §4 的界面说明操作：
@@ -98,16 +98,16 @@ set NOVEL_LLM_API_KEY=sk-xxxx
 
 ```bat
 :: 初始化（检查分片合法性，生成骨架）
-.venv\Scripts\python.exe run.py init --novel 示例书名
+D:\data\dsh_wz1\pyfordsh\python.exe run.py init --novel 示例书名
 
 :: 自动读完整本（可随时 Ctrl+C 中断，重启续跑）
-.venv\Scripts\python.exe run.py run --novel 示例书名
+D:\data\dsh_wz1\pyfordsh\python.exe run.py run --novel 示例书名
 
 :: 只看进度
-.venv\Scripts\python.exe run.py status --novel 示例书名
+D:\data\dsh_wz1\pyfordsh\python.exe run.py status --novel 示例书名
 
 :: 配置体检
-.venv\Scripts\python.exe run.py validate
+D:\data\dsh_wz1\pyfordsh\python.exe run.py validate
 ```
 
 > 首次直接 `run` 也可以：metadata 缺失时**自动按默认参数 init**（K31/K42），无需手动 init。
@@ -115,7 +115,7 @@ set NOVEL_LLM_API_KEY=sk-xxxx
 ### 2.4 预演（不花一分钱）
 
 ```bat
-.venv\Scripts\python.exe run.py run --novel 示例书名 --dry-run
+D:\data\dsh_wz1\pyfordsh\python.exe run.py run --novel 示例书名 --dry-run
 ```
 
 打印本批范围/待调片数/小结是否触发/预计退出码，**不写任何文件、不调 AI**。
@@ -125,7 +125,7 @@ set NOVEL_LLM_API_KEY=sk-xxxx
 ## 3. 目录结构
 
 ```
-CODE_ROOT = D:\AiNovelReader
+CODE_ROOT = D:\data\dsh_wz1\novel_skill
 ├── config.json            # LLM 与运行参数（§5）
 ├── run.py                 # CLI 主入口（run/init/status/validate）
 ├── gui_launcher.py        # GUI 入口（PyQt6）
@@ -138,9 +138,9 @@ CODE_ROOT = D:\AiNovelReader
 │   ├── secrets.py         #   Windows DPAPI 加解密（gui\.secrets.json）
 │   └── .secrets.json      #   API Key 密文（生成后出现，已 gitignore）
 ├── prompts\               # AI 模板（版本锁定，勿改）
-└── tests\                 # 221 项测试（backend=fake 全离线）
+└── tests\                 # 223 项测试（backend=fake 全离线）
 
-BASE = D:\xxx\novel_reading
+BASE = D:\data\dsh_wz1\novel_reading
 ├── .示例书名.run.lock     # 单实例锁（BASE 级）
 └── 示例书名\              # ROOT
     ├── metadata.json      # 任务状态唯一真源
@@ -239,8 +239,8 @@ API Key **只进 DPAPI 密文**（`gui\.secrets.json`），`config.json` 仅记�
         "model":       "Qwen" },                  //   reader 独立模型
       "summarizer": {
         "api_key_env": "NOVEL_LLM_SUMMARIZER_KEY",//   summarizer 独立 key 环境变量名
-        "base_url":    "https://xxxx/v1",    //   summarizer 独立端点（远程）
-        "model":       "deepseek-v4-flash" } //   summarizer 独立模型
+        "base_url":    "https://tbtk.asia/v1",    //   summarizer 独立端点（远程）
+        "model":       "deepseek-v4-flash-0731" } //   summarizer 独立模型
     },
     "timeout_s": 300,                             // 单次请求超时（秒）
     "max_retries": 3,                             // 网络/协议重试次数（阶段 A 预算）
@@ -366,8 +366,9 @@ summarizer 用远程兼容端点（deepseek，需真 Key）——各填各的，
 
 ## 8. 成本估算与模型选型（§7.2 口径）
 
-单片输入 ≈ `summary`（≤ summary_max 字）＋ 前情窗口（≤ timeline_window×5 行）＋
-**正文（≤ chunk_max_chars=30000 字）**。中文按 **1 字 ≈ 1 token** 粗估：
+单片输入 ≈ `summary`（≤ summary_max 字）＋ 前情窗口（最近 `timeline_window` **片**、
+行数上限 `timeline_window×5`）＋ **正文（≤ chunk_max_chars=30000 字）**。中文按
+**1 字 ≈ 1 token** 粗估：
 
 | 场景 | 单片输入 token（约） | 说明 |
 |---|---|---|
@@ -382,7 +383,7 @@ summarizer 用远程兼容端点（deepseek，需真 Key）——各填各的，
 **当前双套的成本形态**（读者常驻、小结低频）：
 
 - **Reader（读正文，调用最频繁）**：本地 Qwen（llama-server）→ **免费**，不受量约束；
-- **Summarizer（写小结，每 `timeline_window` 片一次）**：远程 deepseek 按 token 计费，
+- **Summarizer（写小结，每 `timeline_window+1` 片一次，§7 告诫 2）**：远程 deepseek 按 token 计费，
   但调用次数少——一本 12 片书仅约 1–2 次小结调用，花费极小。
 
 > 通用参考：按 gpt-4o-mini 定价（输入 $0.15/1M、输出 $0.6/1M），一本 12 片书约
@@ -414,7 +415,9 @@ summarizer 用远程兼容端点（deepseek，需真 Key）——各填各的，
 5 行 → 小结一次，循环直到读完（收尾不足 5 片按实际剩余读）。
 
 **补充：5 片不是打包一次发**。每一片都是**一次独立的 LLM 请求**（一片一次调用），
-请求内容 = 前情摘要 + 最近 `timeline_window` 行时间线 + 当前这 1 片正文，返回这 1 片
+请求内容 = 前情摘要 ＋ 最近 `timeline_window` **片**的事件行（起 `max(1, processed−window+1)`、
+止 `processed`，K33；**批内不推进**，见 §13）＋ **本批已读前片事件**（K43 批内接力，
+批内第 2..N 片才有）＋ 当前这 1 片正文，返回这 1 片
 的事件行。5 次调用全部成功后，5 行事件才**一起**写进时间线（append）、一起渲染笔记、
 一起验证、一起提交（commit）——所以 `batch_size` 是**事务单位**（一起存、一起退），
 **不是**「一次请求发 5 片」。中途任一片失败 → 整批回滚、5 片重读（K22/K24）。
@@ -422,16 +425,30 @@ summarizer 用远程兼容端点（deepseek，需真 Key）——各填各的，
 **代价与解决（批内接力，K43 / 需求书 v3.2.2 §15）**：v3.2.1 时期批内第 2..N 片
 **看不到本批前面片的剧情**——每次请求的快照是「批开始前」的：前情摘要只覆盖到上次
 小结，时间线只到批开始前（默认参数下读 11–15 片时摘要甚至还是空的——第一次小结要
-到 processed=15 之后才触发），第 15 片只见「摘要 + 1–10 行时间线 + 第 15 片正文」，
+到 processed=15 之后才触发），第 15 片只见「摘要 + 1–10 片时间线行 + 第 15 片正文」，
 11–14 的剧情对它不可见。**K43 已解决**：批内第 N 片请求时注入「本批已读前片事件」
 段（读 `.batch\` 中已成功前片的 events），第 3 片能看到第 1、2 片事件行，第 5 片
 能看到前 4 片；失败重跑时前片不重调（K22）、注入内容不变 → 重读依然可复现。
 剩余边界：注入的是事件行，不含前片 notes 细节；摘要仍只到上次小结。详见 §13。
 
-### Q2. `timeline_window` 默认多少？每次阅读喂给模型的时间线是多少行？
-默认 `timeline_window=10`（范围 1–50）。读每片时，从**当前进度往前数 10 行**喂给
-模型（起 `max(1, processed−window+1)`、止 `processed`，K33 钳制）；时间线还没满
-10 行就把现有的行全给（开头几片依次是 1 行、2 行…直到 10 行）。
+### Q2. `timeline_window` 默认多少？每次阅读喂给模型的时间线是多少？
+默认 `timeline_window=10`（范围 1–50）。**量尺是「片」不是「行」**：读每片时，取
+**上次提交进度往前数 `timeline_window` 片**的事件行（起 `max(1, processed−window+1)`、
+止 `processed`，K33 钳制），行数上限 `timeline_window×5`（K20，超限整片丢弃、保最新）。
+一片通常 3–5 行，所以默认参数下窗口一般是 30–50 行；时间线还没满就把现有的行全给
+（开头几片依次是 5 行、10 行…直到满窗）。
+
+**注意「止于 processed」= 止于批开始前**：同一批的 3–5 片共用这一份快照，批内不推进
+（§13）；批内第 2..N 片的即时前情由 **K43 批内接力**从 `.batch\` 注入，见
+`run.log` 的 `[window]` 行——`scope=pre-batch` 是时间线窗口，`inj=Np/Mr` 是本批接力
+注入的片数/行数：
+
+```
+[reader] [window] [batch=30] [SKIP] scope=pre-batch tail=[82,87] rows=26 cap=30 inj=1p/4r
+```
+
+读第 89 片时 `tail` 仍止于 87（批内未提交），但 `inj=1p/4r` 说明第 88 片的 4 条事件
+已经注入本片 prompt——**这不是窗口没跟上，两段合起来才是本片看到的全部前情**。
 
 ### Q3. 总结时提供时间线多少行？
 **不是固定行数**：提供**上次小结之后新写出的全部行**（切片
@@ -480,17 +497,33 @@ metadata **缺失**时重建，都不是改参数入口。
 | 停止后如何续跑 | 直接再点「开始」（或命令行 `run.py run --novel 名`），从断点继续 |
 | 远程小结报「认证失败/401」 | Summarizer 栏 Key 没填或填错（§5.3）；填对后「保存配置」再「开始」 |
 
+### Q6. `run.log` 里写着 `tail=[82,87]`，可我已经在读 89 了，是 bug 吗？
+不是。`tail` 是**时间线窗口**，止于「上次提交进度」（批开始前）——整批一起 append，
+批内不推进（§6.2 事务边界、§13）；批内已读前片的剧情由 **K43 批内接力**注入，记在
+同一行的 `inj=Np/Mr` 上。判定口径：
+
+| 看什么 | 含义 |
+|---|---|
+| `scope=pre-batch` | 这一行的时间线窗口是「批开始前」快照，非实时进度 |
+| `tail=[a,b]` | 时间线取到哪几片（`b` = 上次 commit 的 `processed`） |
+| `inj=Np/Mr` | 本批已读前片注入了几片、几行事件（`inj=0p/0r` = 批首片/无前片） |
+| `rows=` / `cap=` | 窗口实际行数 / K20 上限（`window×5`，超限整片丢弃 → `dropped=part_XXX`） |
+
+真正要警惕的是：`[reader] [llm] ... [ERROR]`、`[driver] [error]`、以及
+`attempt` 一次次变大——那才是故障（见 §9 速查表）。详细口径见 §10 Q2。
+
 ---
 
 ## 11. 测试
 
 ```bat
-cd /d D:\AiNovelReader
+cd /d D:\data\dsh_wz1\novel_skill
 set PYTHONIOENCODING=utf-8
-.venv\Scripts\python.exe -m pytest
+D:\data\dsh_wz1\pyfordsh\python.exe -m pytest
 ```
 
-- **221 项全离线**（backend=fake，无网络无费用可复现）；
+- **223 项全离线**（backend=fake，无网络无费用可复现；含出口测试 52 = `[window]`
+  日志的 `scope=pre-batch` / `inj=Np/Mr` 回归锁，见 §10 Q6）；
 - 测试 39（真实模型冒烟，3 片小书）唯一需网络/付费环节——已用本地
   Qwen（llama-server 127.0.0.1:1235）真机验证通过，样例书保留在
   `novel_reading\smoke39`（时间线/笔记/小结可自行查看）；
@@ -523,13 +556,13 @@ set PYTHONIOENCODING=utf-8
 > 逐分片一次调用（1 片 = 1 次 LLM）；`batch_size` 退化为**事务/回滚单元**。
 
 **原始机制（v3.2.1）**：每一片 = 一次独立的 LLM 请求；每次请求的上下文快照 =
-「前情摘要（覆盖到上次小结）＋ 最近 `timeline_window` 行时间线（覆盖到批开始前）＋
+「前情摘要（覆盖到上次小结）＋ 最近 `timeline_window` **片**时间线行（覆盖到批开始前）＋
 本片正文」。**批内不实时追加、不更新**——5 次调用共用批开始时的同一份快照，全部成功
 后才一起写入时间线。
 
 **原始代价（v3.2.1 真实存在）**：批内第 2..N 片**看不到本批前面片的剧情**。默认
 `batch_size=5`、`timeline_window=10` 时最典型：读 11–15 片时摘要甚至还是空的（第一
-次小结要到 `processed=15` 之后才触发），第 15 片只见「摘要 ＋ 1–10 行时间线 ＋ 第 15
+次小结要到 `processed=15` 之后才触发），第 15 片只见「摘要 ＋ 1–10 片时间线行 ＋ 第 15
 片正文」，11–14 的剧情对它完全不可见。盲区大小随 `batch_size` 线性增长。
 
 **K43 批内接力（v3.2.2 解决）**：批内第 N 片请求时，从 `.batch\` 读取本批已读前片
