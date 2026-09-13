@@ -93,21 +93,34 @@ def _clean_ref(text: object) -> str:
     return s.replace("|", "｜")
 
 
-def _batch_preview_section(root: Path, meta: MetaDoc, chunk_id: str) -> str:
+def _batch_preview_section(root: Path, meta: MetaDoc, chunk_id: str,
+                           stats: dict | None = None) -> str:
     """K43 批内接力：读 .batch 中本批已读前片（序号 < 当前片）的 events，
     格式化为参考段；缺失/损坏/字段缺失 → 跳过该片（仅影响参考，不判失败）。
 
     返回完整段落（含标题）或空串（首片无前片 / 全部跳过 / batch_size=1）。
     可复现性依赖 K22：已成功片不重调、.batch 结果原样保留。
+
+    stats（可选出参，§15 v3.2.3）：回填 {"parts": 实际贡献前片数, "rows": 注入
+    事件行数}，供 [window] 日志显示批内接力注入量；返回契约不变（恒为 str），
+    故既有调用方（含测试）无需改动。
     """
+    def _report(n_parts: int, n_rows: int) -> None:
+        if stats is not None:
+            stats["parts"] = n_parts
+            stats["rows"] = n_rows
+
     try:
         num = int(chunk_id.rsplit("_", 1)[1])
     except (ValueError, IndexError):
+        _report(0, 0)
         return ""
     start = meta.processed_chunks + 1              # 本批首片（批范围由 processed 推导）
     if num <= start:
+        _report(0, 0)
         return ""
     lines: list[str] = []
+    n_parts = 0
     for i in range(start, num):
         p = root / ".batch" / f"part_{i:0{meta.chunk_padding}d}.json"
         try:
@@ -119,13 +132,18 @@ def _batch_preview_section(root: Path, meta: MetaDoc, chunk_id: str) -> str:
         evs = data.get("events")
         if not isinstance(evs, list):
             continue
+        before = len(lines)
         for e in evs:
             if not isinstance(e, dict) or "event" not in e or "impact" not in e:
                 continue
             lines.append(f"[part_{i:0{meta.chunk_padding}d}] 事件："
                          f"{_clean_ref(e['event'])} 影响：{_clean_ref(e['impact'])}")
+        if len(lines) > before:                     # 该片有合法事件行 → 计一片
+            n_parts += 1
     if not lines:
+        _report(0, 0)
         return ""
+    _report(n_parts, len(lines))
     return "## 本批已读前片事件（批内接力，仅作背景参考）\n\n" + "\n".join(lines)
 
 
@@ -133,7 +151,10 @@ def _build_reader_prompt(root: Path, meta: MetaDoc, chunk_id: str,
                          chunk_text: str,
                          logger: Logger | None = None) -> str:
     """§4.2 + K33/K43：summary_text（空则「（无前情）」）+ timeline_tail 窗口钳制
-    + K20 行数上限（整片裁剪，保最新事件）+ batch_section（K43 批内接力）。"""
+    + K20 行数上限（整片裁剪，保最新事件）+ batch_section（K43 批内接力）。
+
+    [window] 日志（§15 v3.2.3）：`scope=pre-batch` + `inj=Np/Mr`——时间线窗口止于
+    上次提交进度，批内即时前情走 K43 注入段，两个量分列显示。"""
     sm = root / "summary.md"
     summary_text = ""
     if sm.exists():
@@ -149,13 +170,20 @@ def _build_reader_prompt(root: Path, meta: MetaDoc, chunk_id: str,
     max_rows = meta.timeline_window * 5
     timeline_lines, dropped = timelinemod.tail_capped(
         root / "plot_timeline.md", tl_start, tl_end, max_rows=max_rows)
-    if logger is not None:
-        logger.skip("reader", "window", meta.current_batch + 1,
-                    f"tail=[{tl_start},{tl_end}] rows={len(timeline_lines)}"
-                    f" cap={max_rows}"
-                    f"{f' dropped=part_{dropped:03d}' if dropped else ''}")
     timeline_tail = "\n".join(timeline_lines)
-    batch_section = _batch_preview_section(root, meta, chunk_id)      # K43
+    inj: dict = {}
+    batch_section = _batch_preview_section(root, meta, chunk_id, inj)      # K43
+    if logger is not None:
+        # §15 v3.2.3（可观测性）：scope=pre-batch 明示时间线窗口止于「上次提交
+        # 进度」（批内不推进，§6.2/K20/K33）；inj=Np/Mr 显示批内接力段实际注入
+        # 的前片数/事件行数（K43，批内第 2..N 片的即时前情）。两段合起来才是
+        # 本片真正看到的全部前情——只看 tail 会误判为「窗口没跟上」。
+        dropped_s = (f" dropped=part_{dropped:0{meta.chunk_padding}d}"
+                     if dropped else "")
+        logger.skip("reader", "window", meta.current_batch + 1,
+                    f"scope=pre-batch tail=[{tl_start},{tl_end}]"
+                    f" rows={len(timeline_lines)} cap={max_rows}"
+                    f"{dropped_s} inj={inj['parts']}p/{inj['rows']}r")
     return build_reader_prompt(
         meta.prompt_version, novel_name=meta.novel_name, chunk_id=chunk_id,
         summary_text=summary_text, timeline_tail=timeline_tail,
